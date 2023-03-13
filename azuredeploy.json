@@ -15,7 +15,6 @@
       "apiVersion": "2021-04-01",
       "name": "nestedDeployment",
       "location": "eastus",
-      "subscriptionId": "44b7c468-c1ef-487a-9534-6b4b32835937",
       "properties": {
         "mode": "Incremental",
         "template": {
