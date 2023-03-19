@@ -37,14 +37,7 @@
       "name": "[format('{0}/{1}', parameters('zoneName'), parameters('recordName'))]",
       "properties": {
         "TTL": 3600,
-        "ARecords": [
-          {
-            "ipv4Address": "1.2.3.4"
-          },
-          {
-            "ipv4Address": "1.2.3.5"
-          }
-        ]
+        "ARecords": []
       },
       "dependsOn": [
         "[resourceId('Microsoft.Network/dnsZones', parameters('zoneName'))]"
