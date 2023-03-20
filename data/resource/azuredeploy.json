@@ -4,7 +4,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "virtualNetworks_appvnet_name": {
-            "defaultValue": "appvnet",
+            "defaultValue": "vnet",
             "type": "String"
         }
     },
