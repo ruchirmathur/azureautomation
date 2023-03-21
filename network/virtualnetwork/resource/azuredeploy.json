@@ -44,6 +44,13 @@
         "description": "Subnet 2 Prefix"
       }
     },
+      "subnet2Name": {
+      "type": "string",
+      "defaultValue": "Subnet2",
+      "metadata": {
+        "description": "Subnet 2 Name"
+      }
+    },
     "subnet3Name": {
       "type": "string",
       "defaultValue": "Subnet3",
@@ -55,13 +62,6 @@
       "defaultValue": "10.0.3.0/24",
       "metadata": {
         "description": "Subnet 3 Prefix"
-      }
-    },
-    "subnet2Name": {
-      "type": "string",
-      "defaultValue": "Subnet2",
-      "metadata": {
-        "description": "Subnet 2 Name"
       }
     },
     "location": {
