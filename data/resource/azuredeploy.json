@@ -45,10 +45,6 @@
             "type": "object",
             "defaultValue": {}
         },
-        "firewallRules": {
-            "type": "object",
-            "defaultValue": {}
-        },
         "backupRetentionDays": {
             "type": "int"
         },
