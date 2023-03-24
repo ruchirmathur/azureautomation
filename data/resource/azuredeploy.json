@@ -118,6 +118,10 @@
          "privateDnsZoneDeploymentName": {
             "type": "string",
             "defaultValue": ""
+        },
+         "subscriptionId": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "resources": [
