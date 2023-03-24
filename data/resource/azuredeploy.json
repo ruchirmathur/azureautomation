@@ -120,10 +120,6 @@
             "defaultValue": ""
         }
     },
-    "variables": {
-        "api": "[parameters('apiVersion')]",
-        "firewallRules": "[parameters('firewallRules').rules]"
-    },
     "resources": [
         {
             "condition": "[or(parameters('vnetData').isNewVnet, parameters('vnetData').subnetNeedsUpdate)]",
