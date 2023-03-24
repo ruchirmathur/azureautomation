@@ -104,11 +104,15 @@
             "defaultValue": "[newGuid()]"
         },
          "usePrivateDnsZone": {
-            "type": "string",
+            "type": "boolean",
             "defaultValue": false
         },
          "isNewPrivateDnsZone": {
-            "type": "string",
+            "type": "boolean",
+            "defaultValue": false
+        },
+         "isNewVnet": {
+            "type": "boolean",
             "defaultValue": false
         }
     },
@@ -117,33 +121,6 @@
         "firewallRules": "[parameters('firewallRules').rules]"
     },
     "resources": [
-        {
-            "condition": "[and(parameters('vnetData').usePrivateDnsZone, parameters('vnetData').isNewPrivateDnsZone)]",
-            "type": "Microsoft.Resources/deployments",
-            "name": "[parameters('privateDnsZoneDeploymentName')]",
-            "apiVersion": "2020-06-01",
-            "subscriptionId": "[parameters('vnetData').privateDnsSubscriptionId]",
-            "resourceGroup": "[parameters('vnetData').privateDnsResourceGroup]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/privateDnsZones",
-                            "apiVersion": "2018-09-01",
-                            "name": "[parameters('vnetData').privateDnsZoneName]",
-                            "location": "global",
-                            "tags": {},
-                            "properties": {}
-                        }
-                    ]
-                }
-            }
-        },
         {
             "condition": "[or(parameters('vnetData').isNewVnet, parameters('vnetData').subnetNeedsUpdate)]",
             "type": "Microsoft.Resources/deployments",
