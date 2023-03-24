@@ -4,7 +4,7 @@
     "parameters": {
         "apiVersion": {
             "type": "string",
-            "defaultValue": "2021-05-01"
+             "defaultValue": "2021-05-01"
         },
         "administratorLogin": {
             "type": "string"
