@@ -126,12 +126,12 @@
     },
     "resources": [
         {
-            "condition": "[or(parameters('vnetData').isNewVnet, parameters('vnetData').subnetNeedsUpdate)]",
+            "condition": "[or(parameters('.isNewVnet'), parameters('subnetNeedsUpdate')]",
             "type": "Microsoft.Resources/deployments",
             "name": "[parameters('virtualNetworkDeploymentName')]",
             "apiVersion": "2020-06-01",
-            "resourceGroup": "[parameters('vnetData').virtualNetworkResourceGroupName]",
-            "subscriptionId": "[parameters('vnetData').subscriptionId]",
+            "resourceGroup": "[parameters('virtualNetworkResourceGroupName')]",
+            "subscriptionId": "[parameters('subscriptionId')]",
             "properties": {
                 "mode": "Incremental",
                 "template": {
@@ -141,7 +141,7 @@
                     "variables": {},
                     "resources": [
                         {
-                            "condition": "[parameters('vnetData').subnetNeedsUpdate]",
+                            "condition": "[parameters('subnetNeedsUpdate')]",
                             "type": "Microsoft.Network/virtualNetworks/subnets",
                             "name": "[concat(parameters('vnetData').virtualNetworkName, '/', parameters('vnetData').subnetName)]",
                             "apiVersion": "2020-05-01",
