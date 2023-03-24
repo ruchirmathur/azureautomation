@@ -104,19 +104,19 @@
             "defaultValue": "[newGuid()]"
         },
          "usePrivateDnsZone": {
-            "type": "boolean",
+            "type": "bool",
             "defaultValue": false
         },
          "isNewPrivateDnsZone": {
-            "type": "boolean",
+            "type": "bool",
             "defaultValue": false
         },
          "subnetNeedsUpdate": {
-            "type": "boolean",
+            "type": "bool",
             "defaultValue": true
         },
          "isNewVnet": {
-            "type": "boolean",
+            "type": "bool",
             "defaultValue": false
         },
          "privateDnsZoneDeploymentName": {
