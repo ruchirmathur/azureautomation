@@ -114,6 +114,10 @@
          "isNewVnet": {
             "type": "boolean",
             "defaultValue": false
+        },
+         "subnetNeedsUpdate": {
+            "type": "boolean",
+            "defaultValue": true
         }
     },
     "variables": {
