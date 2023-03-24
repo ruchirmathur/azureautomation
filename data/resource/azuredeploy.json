@@ -114,6 +114,14 @@
          "subnetNeedsUpdate": {
             "type": "boolean",
             "defaultValue": true
+        },
+         "isNewVnet": {
+            "type": "boolean",
+            "defaultValue": false
+        },
+         "privateDnsZoneDeploymentName": {
+            "type": "string",
+            "defaultValue": ""
         }
     },
     "variables": {
