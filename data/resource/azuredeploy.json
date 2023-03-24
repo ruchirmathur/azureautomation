@@ -143,7 +143,7 @@
                         {
                             "condition": "[parameters('subnetNeedsUpdate')]",
                             "type": "Microsoft.Network/virtualNetworks/subnets",
-                            "name": "[concat(parameters('vnetData').virtualNetworkName, '/', parameters('vnetData').subnetName)]",
+                            "name": "[concat(parameters('virtualNetworkName'), '/', parameters('vnetData').subnetName)]",
                             "apiVersion": "2020-05-01",
                             "properties": "[parameters('vnetData').subnetProperties]"
                         },
