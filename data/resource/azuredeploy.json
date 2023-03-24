@@ -102,6 +102,14 @@
         "guid": {
             "type": "string",
             "defaultValue": "[newGuid()]"
+        },
+         "usePrivateDnsZone": {
+            "type": "string",
+            "defaultValue": false
+        },
+         "isNewPrivateDnsZone": {
+            "type": "string",
+            "defaultValue": false
         }
     },
     "variables": {
