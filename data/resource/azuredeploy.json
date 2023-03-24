@@ -70,31 +70,6 @@
             "type": "string",
             "defaultValue": "Disabled"
         },
-        "vnetData": {
-            "type": "object",
-            "metadata": {
-                "description": "Vnet data is an object which contains all parameters pertaining to vnet and subnet"
-            },
-            "defaultValue": {
-                "virtualNetworkName": "testVnet",
-                "virtualNetworkId": "testVnetId",
-                "subnetName": "testSubnet",
-                "virtualNetworkAddressPrefix": "10.0.0.0/16",
-                "virtualNetworkResourceGroupName": "[resourceGroup().name]",
-                "location": "eastus2",
-                "subscriptionId": "[subscription().subscriptionId]",
-                "subnetProperties": {},
-                "isNewVnet": false,
-                "subnetNeedsUpdate": false,
-                "usePrivateDnsZone": false,
-                "isNewPrivateDnsZone": false,
-                "privateDnsSubscriptionId": "[subscription().subscriptionId]",
-                "privateDnsResourceGroup": "[resourceGroup().name]",
-                "privateDnsZoneName": "testPrivateDnsZone",
-                "linkVirtualNetwork": false,
-                "Network": {}
-            }
-        },
         "virtualNetworkDeploymentName": {
             "type": "string"
         },
