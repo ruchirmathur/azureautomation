@@ -1,313 +1,107 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "apiVersion": {
-            "type": "string",
-             "defaultValue": "2021-05-01"
+        "servername": {
+            "defaultValue": "mysqlserver534343",
+            "type": "String"
         },
-        "administratorLogin": {
-            "type": "string"
+        "virtualNetworks_appvnet_externalid": {
+            "defaultValue": "/subscriptions/subscriptionId/resourceGroups/NetworkResourceGroup/providers/Microsoft.Network/virtualNetworks/appvnet",
+            "type": "String"
         },
-        "administratorLoginPassword": {
-            "type": "securestring"
-        },
-        "location": {
-            "type": "string"
-        },
-        "serverName": {
-            "type": "string"
-        },
-        "serverEdition": {
-            "type": "string"
-        },
-        "vCores": {
-            "type": "int",
-            "defaultValue": 4
-        },
-        "storageSizeGB": {
-            "type": "int"
-        },
-        "haEnabled": {
-            "type": "string",
-            "defaultValue": "Disabled"
-        },
-        "availabilityZone": {
-            "type": "string"
-        },
-        "standbyAvailabilityZone": {
-            "type": "string"
-        },
-        "version": {
-            "type": "string"
-        },
-        "tags": {
-            "type": "object",
-            "defaultValue": {}
-        },
-        "backupRetentionDays": {
-            "type": "int"
-        },
-        "geoRedundantBackup": {
-            "type": "string"
-        },
-        "vmName": {
-            "type": "string",
-            "defaultValue": "Standard_B1ms"
-        },
-        "storageIops": {
-            "type": "int"
-        },
-        "storageAutogrow": {
-            "type": "string",
-            "defaultValue": "Enabled"
-        },
-        "autoIoScaling": {
-            "type": "string",
-            "defaultValue": "Disabled"
-        },
-        "virtualNetworkDeploymentName": {
-            "type": "string"
-        },
-        "virtualNetworkLinkDeploymentName": {
-            "type": "string"
-        },
-        "privateDnsZoneDeploymentName": {
-            "type": "string"
-        },
-        "identityData": {
-            "type": "object",
-            "defaultValue": {}
-        },
-        "dataEncryptionData": {
-            "type": "object",
-            "defaultValue": {}
-        },
-        "serverParameters": {
-            "type": "array",
-            "defaultValue": []
-        },
-        "aadEnabled": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "aadData": {
-            "type": "object",
-            "defaultValue": {}
-        },
-        "guid": {
-            "type": "string",
-            "defaultValue": "[newGuid()]"
-        },
-         "usePrivateDnsZone": {
-            "type": "bool",
-            "defaultValue": false
-        },
-         "isNewPrivateDnsZone": {
-            "type": "bool",
-            "defaultValue": false
-        },
-         "subnetNeedsUpdate": {
-            "type": "bool",
-            "defaultValue": true
-        },
-         "isNewVnet": {
-            "type": "bool",
-            "defaultValue": false
-        },
-         "privateDnsZoneDeploymentName": {
-            "type": "string",
-            "defaultValue": ""
-        },
-         "subscriptionId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-         "virtualNetworkResourceGroupName": {
-            "type": "string",
-            "defaultValue": "dataresgroup"
+        "virtualNetworks_privatezone_externalid": {
+            "defaultValue": "/subscriptions/subscriptionId/resourceGroups/NetworkResourceGroup/providers/Microsoft.Network/privateDnsZones/mysqlserver534343.private.mysql.database.azure.com",
+            "type": "String"
         }
     },
+    "variables": {},
     "resources": [
         {
-            "condition": "[or(parameters('isNewVnet'), parameters('subnetNeedsUpdate')]",
-            "type": "Microsoft.Resources/deployments",
-            "name": "[parameters('virtualNetworkDeploymentName')]",
-            "apiVersion": "2020-06-01",
-            "resourceGroup": "[parameters('virtualNetworkResourceGroupName')]",
-            "subscriptionId": "[parameters('subscriptionId')]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "condition": "[parameters('subnetNeedsUpdate')]",
-                            "type": "Microsoft.Network/virtualNetworks/subnets",
-                            "name": "[concat(parameters('virtualNetworkName'), '/', parameters('subnetName')]",
-                            "apiVersion": "2020-05-01",
-                            "properties": "[parameters('subnetProperties')]"
-                        },
-                        {
-                            "condition": "[parameters('.isNewVnet')]",
-                            "type": "Microsoft.Network/virtualNetworks",
-                            "name": "[parameters('virtualNetworkName')]",
-                            "apiVersion": "2020-05-01",
-                            "location": "[parameters('location')]",
-                            "tags": "[parameters('tags')]",
-                            "properties": {
-                                "addressSpace": {
-                                    "addressPrefixes": [
-                                        "[parameters('virtualNetworkAddressPrefix')]"
-                                    ]
-                                },
-                                "subnets": [
-                                    {
-                                        "name": "[parameters('subnetName')]",
-                                        "properties": "[parameters('subnetProperties')]"
-                                    }
-                                ]
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "apiVersion": "2020-06-01",
-            "condition": "[and(parameters('usePrivateDnsZone'), parameters('linkVirtualNetwork'))]",
-            "name": "[parameters('virtualNetworkLinkDeploymentName')]",
-            "type": "Microsoft.Resources/deployments",
-            "dependsOn": [
-                "[parameters('privateDnsZoneDeploymentName')]",
-                "[parameters('virtualNetworkDeploymentName')]"
-            ],
-            "subscriptionId": "[parameters('vnetData').privateDnsSubscriptionId]",
-            "resourceGroup": "[parameters('vnetData').privateDnsResourceGroup]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
-                            "apiVersion": "2020-06-01",
-                            "name": "[concat(parameters('vnetData').privateDnsZoneName, '/', uniqueString(parameters('vnetData').virtualNetworkId))]",
-                            "location": "global",
-                            "properties": {
-                                "virtualNetwork": {
-                                    "id": "[parameters('vnetData').virtualNetworkId]"
-                                },
-                                "registrationEnabled": false
-                            }
-                        }
-                    ]
-                }
-            }
-        },
-        {
-            "apiVersion": "[variables('api')]",
-            "location": "[parameters('location')]",
-            "name": "[parameters('serverName')]",
-            "identity": "[if(empty(parameters('identityData')), json('null'), parameters('identityData'))]",
-            "dependsOn": [
-                "[parameters('virtualNetworkLinkDeploymentName')]"
-            ],
-            "properties": {
-                "version": "[parameters('version')]",
-                "administratorLogin": "[parameters('administratorLogin')]",
-                "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-                "Network": "[if(empty(parameters('vnetData').Network), json('null'), parameters('vnetData').Network)]",
-                "Storage": {
-                    "StorageSizeGB": "[parameters('storageSizeGB')]",
-                    "Iops": "[parameters('storageIops')]",
-                    "Autogrow": "[parameters('storageAutogrow')]",
-                    "AutoIoScaling": "[parameters('autoIoScaling')]"
-                },
-                "Backup": {
-                    "backupRetentionDays": "[parameters('backupRetentionDays')]",
-                    "geoRedundantBackup": "[parameters('geoRedundantBackup')]"
-                },
-                "availabilityZone": "[parameters('availabilityZone')]",
-                "highAvailability": {
-                    "mode": "[parameters('haEnabled')]",
-                    "standbyAvailabilityZone": "[parameters('standbyAvailabilityZone')]"
-                },
-                "dataencryption": "[if(empty(parameters('dataEncryptionData')), json('null'), parameters('dataEncryptionData'))]"
-            },
+            "type": "Microsoft.DBforMySQL/flexibleServers",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[parameters('servername')]",
+            "location": "East US",
             "sku": {
-                "name": "[parameters('vmName')]",
-                "tier": "[parameters('serverEdition')]",
-                "capacity": "[parameters('vCores')]"
+                "name": "Standard_B1ms",
+                "tier": "Burstable"
             },
-            "tags": "[parameters('tags')]",
-            "type": "Microsoft.DBforMySQL/flexibleServers"
-        },
-        {
-            "condition": "[parameters('aadEnabled')]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-08-01",
-            "name": "addAdmins",
-            "dependsOn": [
-                "[concat('Microsoft.DBforMySQL/flexibleServers/', parameters('serverName'))]"
-            ],
             "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.DBforMySQL/flexibleServers/administrators",
-                            "name": "[concat(parameters('serverName'),'/ActiveDirectory')]",
-                            "apiVersion": "[variables('api')]",
-                            "properties": {
-                                "administratorType": "[parameters('aadData').administratorType]",
-                                "identityResourceId": "[parameters('aadData').identityResourceId]",
-                                "login": "[parameters('aadData').login]",
-                                "sid": "[parameters('aadData').sid]",
-                                "tenantId": "[parameters('aadData').tenantId]"
-                            }
-                        }
-                    ]
+                "administratorLogin": "tobechanged",
+                "storage": {
+                    "storageSizeGB": 20,
+                    "iops": 360,
+                    "autoGrow": "Enabled",
+                    "autoIoScaling": "Disabled"
+                },
+                "version": "5.7",
+                "availabilityZone": "2",
+                "maintenanceWindow": {
+                    "customWindow": "Disabled",
+                    "dayOfWeek": 0,
+                    "startHour": 0,
+                    "startMinute": 0
+                },
+                "replicationRole": "None",
+                "network": {
+                    "delegatedSubnetResourceId": "[concat(parameters('virtualNetworks_appvnet_externalid'), '/subnets/Subnet1')]",
+                    "privateDnsZoneResourceId": "[parameters('virtualNetworks_privatezone_externalid')]"
+                },
+                "backup": {
+                    "backupRetentionDays": 7,
+                    "geoRedundantBackup": "Disabled"
+                },
+                "highAvailability": {
+                    "mode": "Disabled"
                 }
             }
         },
         {
-            "condition": "[and(greater(length(parameters('serverParameters')), 0), parameters('aadEnabled'))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-08-01",
-            "copy": {
-                "count": "[if(greater(length(parameters('serverParameters')), 0), length(parameters('serverParameters')), 1)]",
-                "mode": "serial",
-                "name": "serverParametersIterator"
-            },
+            "type": "Microsoft.DBforMySQL/flexibleServers/databases",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[concat(parameters('servername'), '/information_schema')]",
             "dependsOn": [
-                "[concat('Microsoft.DBforMySQL/flexibleServers/', parameters('serverName'))]",
-                "Microsoft.Resources/deployments/addAdmins"
+                "[resourceId('Microsoft.DBforMySQL/flexibleServers', parameters('servername'))]"
             ],
-            "name": "[concat('serverParameters-', copyIndex(), '-', parameters('guid'))]",
             "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.DBforMySQL/flexibleServers/configurations",
-                            "name": "[concat(parameters('serverName'),'/',parameters('serverParameters')[copyIndex()].name)]",
-                            "apiVersion": "[variables('api')]",
-                            "properties": {
-                                "value": "[parameters('serverParameters')[copyIndex()].value]",
-                                "source": "[parameters('serverParameters')[copyIndex()].source]"
-                            }
-                        }
-                    ]
-                }
+                "charset": "utf8",
+                "collation": "utf8_general_ci"
+            }
+        },
+        {
+            "type": "Microsoft.DBforMySQL/flexibleServers/databases",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[concat(parameters('servername'), '/mysql')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforMySQL/flexibleServers', parameters('servername'))]"
+            ],
+            "properties": {
+                "charset": "latin1",
+                "collation": "latin1_swedish_ci"
+            }
+        },
+        {
+            "type": "Microsoft.DBforMySQL/flexibleServers/databases",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[concat(parameters('servername'), '/performance_schema')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforMySQL/flexibleServers', parameters('servername'))]"
+            ],
+            "properties": {
+                "charset": "utf8",
+                "collation": "utf8_general_ci"
+            }
+        },
+        {
+            "type": "Microsoft.DBforMySQL/flexibleServers/databases",
+            "apiVersion": "2021-12-01-preview",
+            "name": "[concat(parameters('servername'), '/sys')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.DBforMySQL/flexibleServers', parameters('servername'))]"
+            ],
+            "properties": {
+                "charset": "utf8",
+                "collation": "utf8_general_ci"
             }
         }
     ]
