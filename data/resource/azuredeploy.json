@@ -31,14 +31,14 @@
     },
     "skuCapacity": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 1,
       "metadata": {
         "description": "Azure database for MySQL compute capacity in vCores (2,4,8,16,32)"
       }
     },
     "skuName": {
       "type": "string",
-      "defaultValue": "GP_Gen5_2",
+      "defaultValue": "Standard_B1ms",
       "metadata": {
         "description": "Azure database for MySQL sku name "
       }
@@ -52,11 +52,9 @@
     },
     "SkuTier": {
       "type": "string",
-      "defaultValue": "GeneralPurpose",
+      "defaultValue": "Burstable",
       "allowedValues": [
-        "Basic",
-        "GeneralPurpose",
-        "MemoryOptimized"
+        "Burstable"
       ],
       "metadata": {
         "description": "Azure database for MySQL pricing tier"
@@ -64,7 +62,7 @@
     },
     "skuFamily": {
       "type": "string",
-      "defaultValue": "Gen5",
+      "defaultValue": "Standard_B1ms",
       "metadata": {
         "description": "Azure database for MySQL sku family"
       }
@@ -73,9 +71,7 @@
       "type": "string",
       "defaultValue": "8.0",
       "allowedValues": [
-        "5.6",
-        "5.7",
-        "8.0"
+        "5.7"
       ],
       "metadata": {
         "description": "MySQL version"
