@@ -69,7 +69,7 @@
     },
     "mysqlVersion": {
       "type": "string",
-      "defaultValue": "8.0",
+      "defaultValue": "5.7",
       "allowedValues": [
         "5.7"
       ],
