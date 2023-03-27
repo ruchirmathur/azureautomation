@@ -28,7 +28,7 @@
             },
             "properties": {
                 "administratorLogin": "tobechanged",
-                "administratorPassword": "tobechanged",
+                "administratorLoginPassword": "tobechanged",
                 "storage": {
                     "storageSizeGB": 20,
                     "iops": 360,
