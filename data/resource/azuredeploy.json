@@ -12,7 +12,7 @@
     "serverName": {
       "type": "string",
       "metadata": {
-        "description": "Server Name for Azure database for MySQL"
+        "description": "Server Name for Azure database MySQL"
       }
     },
     "administratorLogin": {
