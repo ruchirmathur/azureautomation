@@ -4,15 +4,15 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "containerappName": {
-      "defaultValue": "mycontainerapp",
+      "defaultValue": "pocapp",
       "type": "String"
     },
     "location": {
-      "defaultValue": "canadacentral",
+      "defaultValue": "eastus",
       "type": "String"
     },
     "environment_name": {
-      "defaultValue": "myenvironment",
+      "defaultValue": "pocenvironment",
       "type": "String"
     },
     "container_image": {
