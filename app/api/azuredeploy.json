@@ -1,53 +1,121 @@
-
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "containerappName": {
-      "defaultValue": "pocapp",
-      "type": "String"
-    },
-    "location": {
-      "defaultValue": "eastus",
-      "type": "String"
-    },
-    "environment_name": {
-      "defaultValue": "pocenvironment",
-      "type": "String"
-    },
-    "container_image": {
-      "type": "String"
-    },
-    "registry_password": {
-      "type": "SecureString"
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.13.1.58284",
+      "templateHash": "2837037024810761423"
     }
   },
-  "variables": {},
+  "parameters": {
+    "containerAppName": {
+      "type": "string",
+      "defaultValue": "apppoc",
+      "metadata": {
+        "description": "Specifies the name of the container app."
+      }
+    },
+    "containerAppEnvName": {
+      "type": "string",
+      "defaultValue": "apppocenv",
+      "metadata": {
+        "description": "Specifies the name of the container app environment."
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultValue": "vnet",
+      "metadata": {
+        "description": "Specifies the name of the virtual network."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Specifies the location for all resources."
+      }
+    },
+    "containerImage": {
+      "type": "string",
+      "defaultValue": "icr.io/appcafe/open-liberty/samples/getting-started",
+      "metadata": {
+        "description": "Specifies the docker container image to deploy."
+      }
+    },
+    "targetPort": {
+      "type": "int",
+      "defaultValue": 9080,
+      "metadata": {
+        "description": "Specifies the container port."
+      }
+    },
+    "cpuCore": {
+      "type": "string",
+      "defaultValue": "0.25",
+      "allowedValues": [
+        "0.25"
+      ],
+      "metadata": {
+        "description": "Number of CPU cores the container can use. Can be with a maximum of two decimals."
+      }
+    },
+    "memorySize": {
+      "type": "string",
+      "defaultValue": "0.5",
+      "allowedValues": [
+        "0.5"
+      ],
+      "metadata": {
+        "description": "Amount of memory (in gibibytes, GiB) allocated to the container up to 4GiB. Can be with a maximum of two decimals. Ratio with CPU cores must be equal to 2."
+      }
+    },
+    "minReplicas": {
+      "type": "int",
+      "defaultValue": 1,
+      "maxValue": 3,
+      "minValue": 0,
+      "metadata": {
+        "description": "Minimum number of replicas that will be deployed"
+      }
+    },
+    "maxReplicas": {
+      "type": "int",
+      "defaultValue": 3,
+      "maxValue": 3,
+      "minValue": 0,
+      "metadata": {
+        "description": "Maximum number of replicas that will be deployed"
+      }
+    }
+  },
   "resources": [
     {
+      "type": "Microsoft.App/managedEnvironments",
       "apiVersion": "2022-03-01",
-      "type": "Microsoft.App/containerApps",
-      "name": "[parameters('containerappName')]",
+      "name": "[parameters('containerAppEnvName')]",
       "location": "[parameters('location')]",
-      "identity": {
-        "type": "None"
-      },
       "properties": {
-        "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('environment_name'))]",
+        "vnetConfiguration": {
+          "infrastructureSubnetId": "[reference(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '2022-07-01').subnets[0].id]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.App/containerApps",
+      "apiVersion": "2022-03-01",
+      "name": "[parameters('containerAppName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "managedEnvironmentId": "[resourceId('Microsoft.App/managedEnvironments', parameters('containerAppEnvName'))]",
         "configuration": {
-          "secrets": [
-            {
-              "name": "mysecret",
-              "value": "thisismysecret"
-            },
-            {
-              "name": "myregistrypassword",
-              "value": "[parameters('registry_password')]"
-            }
-          ],
           "ingress": {
             "external": true,
-            "targetPort": 80,
+            "targetPort": "[parameters('targetPort')]",
             "allowInsecure": false,
             "traffic": [
               {
@@ -55,114 +123,35 @@
                 "weight": 100
               }
             ]
-          },
-          "registries": [
-            {
-              "server": "myregistry.azurecr.io",
-              "username": "[parameters('containerappName')]",
-              "passwordSecretRef": "myregistrypassword"
-            }
-          ],
-          "dapr": {
-            "appId": "[parameters('containerappName')]",
-            "appPort": 80,
-            "appProtocol": "http",
-            "enabled": true
           }
         },
         "template": {
-          "revisionSuffix": "myrevision",
+          "revisionSuffix": "firstrevision",
           "containers": [
             {
-              "name": "main",
-              "image": "[parameters('container_image')]",
-              "env": [
-                {
-                  "name": "HTTP_PORT",
-                  "value": "80"
-                },
-                {
-                  "name": "SECRET_VAL",
-                  "secretRef": "mysecret"
-                }
-              ],
-              "command": [
-                "npm",
-                "start"
-              ],
+              "name": "[parameters('containerAppName')]",
+              "image": "[parameters('containerImage')]",
               "resources": {
-                "cpu": 0.5,
-                "memory": "1Gi"
-              },
-              "probes": [
-                {
-                  "type": "liveness",
-                  "httpGet": {
-                    "path": "/health",
-                    "port": 8080,
-                    "httpHeaders": [
-                      {
-                        "name": "Custom-Header",
-                        "value": "liveness probe"
-                      }
-                    ]
-                  },
-                  "initialDelaySeconds": 7,
-                  "periodSeconds": 3
-                },
-                {
-                  "type": "readiness",
-                  "tcpSocket": {
-                    "port": 8081
-                  },
-                  "initialDelaySeconds": 10,
-                  "periodSeconds": 3
-                },
-                {
-                  "type": "startup",
-                  "httpGet": {
-                    "path": "/startup",
-                    "port": 8080,
-                    "httpHeaders": [
-                      {
-                        "name": "Custom-Header",
-                        "value": "startup probe"
-                      }
-                    ]
-                  },
-                  "initialDelaySeconds": 3,
-                  "periodSeconds": 3
-                }
-              ],
-              "volumeMounts": [
-                {
-                  "mountPath": "/myempty",
-                  "volumeName": "myempty"
-                },
-                {
-                  "mountPath": "/myfiles",
-                  "volumeName": "azure-files-volume"
-                }
-              ]
+                "cpu": "[json(parameters('cpuCore'))]",
+                "memory": "[format('{0}Gi', parameters('memorySize'))]"
+              }
             }
           ],
           "scale": {
-            "minReplicas": 1,
-            "maxReplicas": 3
-          },
-          "volumes": [
-            {
-              "name": "myempty",
-              "storageType": "EmptyDir"
-            },
-            {
-              "name": "azure-files-volume",
-              "storageType": "AzureFile",
-              "storageName": "myazurefiles"
-            }
-          ]
+            "minReplicas": "[parameters('minReplicas')]",
+            "maxReplicas": "[parameters('maxReplicas')]"
+          }
         }
-      }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.App/managedEnvironments', parameters('containerAppEnvName'))]"
+      ]
     }
-  ]
+  ],
+  "outputs": {
+    "containerAppFQDN": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.App/containerApps', parameters('containerAppName')), '2022-03-01').configuration.ingress.fqdn]"
+    }
+  }
 }
