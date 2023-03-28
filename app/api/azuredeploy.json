@@ -98,12 +98,9 @@
       "location": "[parameters('location')]",
       "properties": {
         "vnetConfiguration": {
-          "infrastructureSubnetId": "[reference(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName')), '2022-07-01').subnets[0].id]"
+          "infrastructureSubnetId": "[parameters('virtualNetworkName')]"
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
-      ]
+      }
     },
     {
       "type": "Microsoft.App/containerApps",
