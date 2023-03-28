@@ -43,9 +43,6 @@
     "skuCount": {
       "type": "int",
       "defaultValue": 0,
-      "allowedValues": [
-        0
-      ],
       "metadata": {
         "description": "The instance size of this API Management service."
       }
