@@ -139,9 +139,12 @@
 							"weight": 100
 						}]
 					},
+					"secrets": [{
+						"name": "acr-password",
+						"value": "[parameters('password')]"
+					}],
 					"registries": [{
-						"identity": "string",
-						"passwordSecretRef": "[parameters('password')]",
+						"passwordSecretRef": "acr-password",
 						"server": "[parameters('serverName')]",
 						"username": "[parameters('userName')]"
 					}]
