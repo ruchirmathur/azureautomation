@@ -11,14 +11,14 @@
 	"parameters": {
 		"containerAppName": {
 			"type": "string",
-			"defaultValue": "apppoc",
+			"defaultValue": "apppoc1",
 			"metadata": {
 				"description": "Specifies the name of the container app."
 			}
 		},
 		"containerAppEnvName": {
 			"type": "string",
-			"defaultValue": "apppocenv",
+			"defaultValue": "apppocenv1",
 			"metadata": {
 				"description": "Specifies the name of the container app environment."
 			}
@@ -67,7 +67,7 @@
 		},
 		"targetPort": {
 			"type": "int",
-			"defaultValue": 9080,
+			"defaultValue": 8081,
 			"metadata": {
 				"description": "Specifies the container port."
 			}
