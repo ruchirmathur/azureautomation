@@ -23,6 +23,27 @@
         "description": "Specifies the name of the container app environment."
       }
     },
+     "serverName": {
+      "type": "string",
+      "defaultValue": "registry",
+      "metadata": {
+        "description": "Specifies the name of the container app environment."
+      }
+    },
+    "userName": {
+      "type": "string",
+      "defaultValue": "userName",
+      "metadata": {
+        "description": "Specifies the name of the container app environment."
+      }
+    },
+     "password": {
+      "type": "string",
+      "defaultValue": "password",
+      "metadata": {
+        "description": "Specifies the name of the container app environment."
+      }
+    },
     "virtualNetworkName": {
       "type": "string",
       "defaultValue": "vnet",
@@ -120,7 +141,15 @@
                 "weight": 100
               }
             ]
+          },
+          "registries": [
+         {
+          "identity": "string",
+          "passwordSecretRef": "[parameters('password')]",
+          "server": "[parameters('serverName')]",
+          "username": "[parameters('userName')]"
           }
+           ],
         },
         "template": {
           "revisionSuffix": "firstrevision",
