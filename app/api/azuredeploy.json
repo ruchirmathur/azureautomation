@@ -149,7 +149,7 @@
           "server": "[parameters('serverName')]",
           "username": "[parameters('userName')]"
           }
-           ],
+           ]
         },
         "template": {
           "revisionSuffix": "firstrevision",
