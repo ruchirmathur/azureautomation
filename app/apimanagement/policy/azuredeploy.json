@@ -1,0 +1,9 @@
+{
+      "type": "Microsoft.ApiManagement/service/policies",
+      "apiVersion": "2021-08-01",
+      "name": "[format('{0}/{1}', parameters('apiManagementServiceName'), 'policy')]",
+      "properties": {
+        "value": "<policies>\n  <inbound>\n  <base />\n  <cors allow-credentials=\"false\">\n  <allowed-origins>\n  <origin>https://black-sky-0ee592f0f.3.azurestaticapps.net</origin>\n  </allowed-origins>\n  <allowed-methods>\n  <method>POST</method>\n  </allowed-methods>\n  <allowed-headers>\n  <header>*</header>\n  </allowed-headers>\n  <expose-headers>\n  <header>*</header>\n  </expose-headers>\n  </cors>\n  </inbound>\n  <backend>\n   <base />\n   </backend>\n    <outbound>\n   <base />\n   </<outbound><on-error>\n   <base />\n   </<on-error>\n</policies>",
+        "format": "xml"
+      }
+    }
