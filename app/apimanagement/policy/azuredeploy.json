@@ -61,7 +61,7 @@
       "apiVersion": "2021-08-01",
       "name": "[format('{0}/{1}', parameters('apiManagementServiceName'), 'policy')]",
       "properties": {
-        "value": "<policies>\n  <inbound>\n    <check-header name=\"X-Azure-FDID\" failed-check-httpcode=\"403\" failed-check-error-message=\"Invalid request.\" ignore-case=\"false\">\n      <value></value>\n    </check-header>\n  </inbound>\n  <backend>\n    <forward-request />\n  </backend>\n</policies>",
+        "value": "<policies>\n  <inbound>\n    <base />\n      <cors allow-credentials=\"false\">\n      <allowed-origins>\n       <origin>https://black-sky-0ee592f0f.3.azurestaticapps.net</origin>\n    </allowed-origins>\n    </cors>\n  </inbound>\n  <backend>\n    <forward-request />\n  </backend>\n</policies>",
         "format": "xml"
       }
     }
