@@ -57,20 +57,6 @@
   },
   "resources": [
     {
-      "type": "Microsoft.ApiManagement/service",
-      "apiVersion": "2021-08-01",
-      "name": "[parameters('apiManagementServiceName')]",
-      "location": "[parameters('location')]",
-      "sku": {
-        "name": "[parameters('sku')]",
-        "capacity": "[parameters('skuCount')]"
-      },
-      "properties": {
-        "publisherEmail": "[parameters('publisherEmail')]",
-        "publisherName": "[parameters('publisherName')]"
-      }
-    },
-    {
       "type": "Microsoft.ApiManagement/service/policies",
       "apiVersion": "2021-08-01",
       "name": "[format('{0}/{1}', parameters('apiManagementServiceName'), 'policy')]",
