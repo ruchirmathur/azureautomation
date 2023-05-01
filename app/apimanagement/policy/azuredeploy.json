@@ -67,7 +67,8 @@
       "type": "Microsoft.ApiManagement/service/policies",
       "apiVersion": "2021-08-01",
       "properties":{
-        "hostNames": "[parameters('hostName')]"
+        "displayName":"hostNames",
+        "value": "[parameters('hostName')]"
       },
       "name": "[format('{0}/{1}', parameters('apiManagementServiceName'), 'policy')]",
       "properties": {
