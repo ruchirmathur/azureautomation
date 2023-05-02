@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.5.6.12127",
-      "templateHash": "6731996442031040156"
+      "templateHash": "8953802152046860269"
     }
   },
   "parameters": {
@@ -31,18 +31,74 @@
       "metadata": {
         "description": "The host name that should be used when connecting from Front Door to the origin."
       }
+    },
+    "dnsZoneName": {
+      "type": "string",
+      "defaultValue": "[format('{0}.azurequickstart.org', uniqueString(resourceGroup().id))]",
+      "metadata": {
+        "description": "The name of the DNS zone to create."
+      }
+    },
+    "cnameRecordName": {
+      "type": "string",
+      "defaultValue": "www",
+      "metadata": {
+        "description": "The name of the CNAME record to create within the DNS zone. The record will be an alias to your Front Door endpoint."
+      }
     }
   },
   "variables": {
     "profileName": "MyFrontDoor",
     "originGroupName": "MyOriginGroup",
     "originName": "MyOrigin",
-    "routeName": "MyRoute"
+    "routeName": "MyRoute",
+    "customDomainResourceName": "[replace(format('{0}.{1}', parameters('cnameRecordName'), parameters('dnsZoneName')), '.', '-')]",
+    "dnsRecordTimeToLive": 3600
   },
   "resources": [
     {
+      "type": "Microsoft.Network/dnsZones",
+      "apiVersion": "2018-05-01",
+      "name": "[parameters('dnsZoneName')]",
+      "location": "global"
+    },
+    {
+      "type": "Microsoft.Network/dnsZones/CNAME",
+      "apiVersion": "2018-05-01",
+      "name": "[format('{0}/{1}', parameters('dnsZoneName'), parameters('cnameRecordName'))]",
+      "properties": {
+        "TTL": "[variables('dnsRecordTimeToLive')]",
+        "CNAMERecord": {
+          "cname": "[reference(resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('endpointName'))).hostName]"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/dnsZones', parameters('dnsZoneName'))]",
+        "[resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('endpointName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Network/dnsZones/TXT",
+      "apiVersion": "2018-05-01",
+      "name": "[format('{0}/{1}', parameters('dnsZoneName'), format('_dnsauth.{0}', parameters('cnameRecordName')))]",
+      "properties": {
+        "TTL": "[variables('dnsRecordTimeToLive')]",
+        "TXTRecords": [
+          {
+            "value": [
+              "[reference(resourceId('Microsoft.Cdn/profiles/customDomains', variables('profileName'), variables('customDomainResourceName'))).validationProperties.validationToken]"
+            ]
+          }
+        ]
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Cdn/profiles/customDomains', variables('profileName'), variables('customDomainResourceName'))]",
+        "[resourceId('Microsoft.Network/dnsZones', parameters('dnsZoneName'))]"
+      ]
+    },
+    {
       "type": "Microsoft.Cdn/profiles",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2020-09-01",
       "name": "[variables('profileName')]",
       "location": "global",
       "sku": {
@@ -51,10 +107,11 @@
     },
     {
       "type": "Microsoft.Cdn/profiles/afdEndpoints",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2020-09-01",
       "name": "[format('{0}/{1}', variables('profileName'), parameters('endpointName'))]",
       "location": "global",
       "properties": {
+        "originResponseTimeoutSeconds": 240,
         "enabledState": "Enabled"
       },
       "dependsOn": [
@@ -63,12 +120,12 @@
     },
     {
       "type": "Microsoft.Cdn/profiles/originGroups",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2020-09-01",
       "name": "[format('{0}/{1}', variables('profileName'), variables('originGroupName'))]",
       "properties": {
         "loadBalancingSettings": {
-          "sampleSize": 1,
-          "successfulSamplesRequired": 1
+          "sampleSize": 4,
+          "successfulSamplesRequired": 3
         },
         "healthProbeSettings": {
           "probePath": "/",
@@ -82,8 +139,24 @@
       ]
     },
     {
+      "type": "Microsoft.Cdn/profiles/customDomains",
+      "apiVersion": "2020-09-01",
+      "name": "[format('{0}/{1}', variables('profileName'), variables('customDomainResourceName'))]",
+      "properties": {
+        "hostName": "[substring(reference(resourceId('Microsoft.Network/dnsZones/CNAME', parameters('dnsZoneName'), parameters('cnameRecordName'))).fqdn, 0, sub(length(reference(resourceId('Microsoft.Network/dnsZones/CNAME', parameters('dnsZoneName'), parameters('cnameRecordName'))).fqdn), 1))]",
+        "tlsSettings": {
+          "certificateType": "ManagedCertificate",
+          "minimumTlsVersion": "TLS12"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/dnsZones/CNAME', parameters('dnsZoneName'), parameters('cnameRecordName'))]",
+        "[resourceId('Microsoft.Cdn/profiles', variables('profileName'))]"
+      ]
+    },
+    {
       "type": "Microsoft.Cdn/profiles/originGroups/origins",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2020-09-01",
       "name": "[format('{0}/{1}/{2}', variables('profileName'), variables('originGroupName'), variables('originName'))]",
       "properties": {
         "hostName": "[parameters('originHostName')]",
@@ -99,9 +172,14 @@
     },
     {
       "type": "Microsoft.Cdn/profiles/afdEndpoints/routes",
-      "apiVersion": "2021-06-01",
+      "apiVersion": "2020-09-01",
       "name": "[format('{0}/{1}/{2}', variables('profileName'), parameters('endpointName'), variables('routeName'))]",
       "properties": {
+        "customDomains": [
+          {
+            "id": "[resourceId('Microsoft.Cdn/profiles/customDomains', variables('profileName'), variables('customDomainResourceName'))]"
+          }
+        ],
         "originGroup": {
           "id": "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('originGroupName'))]"
         },
@@ -112,21 +190,17 @@
         "patternsToMatch": [
           "/*"
         ],
+        "queryStringCachingBehavior": "IgnoreQueryString",
         "forwardingProtocol": "HttpsOnly",
         "linkToDefaultDomain": "Enabled",
         "httpsRedirect": "Enabled"
       },
       "dependsOn": [
+        "[resourceId('Microsoft.Cdn/profiles/customDomains', variables('profileName'), variables('customDomainResourceName'))]",
         "[resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('endpointName'))]",
         "[resourceId('Microsoft.Cdn/profiles/originGroups/origins', variables('profileName'), variables('originGroupName'), variables('originName'))]",
         "[resourceId('Microsoft.Cdn/profiles/originGroups', variables('profileName'), variables('originGroupName'))]"
       ]
     }
-  ],
-  "outputs": {
-    "frontDoorEndpointHostName": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Cdn/profiles/afdEndpoints', variables('profileName'), parameters('endpointName'))).hostName]"
-    }
-  }
+  ]
 }
