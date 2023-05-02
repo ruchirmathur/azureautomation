@@ -20,8 +20,7 @@
       "type": "string",
       "defaultValue": "Standard_AzureFrontDoor",
       "allowedValues": [
-        "Standard_AzureFrontDoor",
-        "Premium_AzureFrontDoor"
+        "Standard_AzureFrontDoor"
       ],
       "metadata": {
         "description": "The name of the SKU to use when creating the Front Door profile."
@@ -68,8 +67,8 @@
       "name": "[format('{0}/{1}', variables('profileName'), variables('originGroupName'))]",
       "properties": {
         "loadBalancingSettings": {
-          "sampleSize": 4,
-          "successfulSamplesRequired": 3
+          "sampleSize": 1,
+          "successfulSamplesRequired": 1
         },
         "healthProbeSettings": {
           "probePath": "/",
