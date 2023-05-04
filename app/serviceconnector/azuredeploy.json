@@ -1,0 +1,69 @@
+{
+   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+   "contentVersion": "1.0.0.0",
+   "parameters": {
+      "name": {
+         "type": "string",
+         "defaultValue": "mysql_553d8",
+         "metadata": {
+            "description": "name"
+         }
+      },
+      "targetId": {
+         "type": "string",
+         "defaultValue": "/subscriptions",
+         "metadata": {
+            "description": "Target Id"
+         }
+      },
+      "authInfo": {
+         "type": "string",
+         "defaultValue": "mysql553d8",
+         "metadata": {
+            "description": "authInfo"
+         }
+      },
+      "container": {
+         "type": "string",
+         "defaultValue": "apppoc",
+         "metadata": {
+            "description": "container"
+         }
+      }
+   },
+   "variables": {},
+   "resources": [
+      {
+         "type": "Microsoft.ServiceLinker/linkers",
+         "apiVersion": "2022-11-01-preview",
+         "scope": "Microsoft.App/containerApps/apppoc1",
+         "name": "[parameters('name')]",
+         "properties": {
+            "clientType": "springBoot",
+            "targetService": {
+               "type": "AzureResource",
+               "id": "[parameters('targetId')]"
+            },
+            "authInfo": {
+               "authType": "secret",
+               "name": "admins",
+               "secretInfo": {
+                  "secretType": "rawValue",
+                  "value": "[parameters('authInfo')]"
+               }
+            },
+            "scope": "[parameters('container')]",
+            "configurationInfo": {
+               "customizedKeys": {},
+               "daprProperties": {
+                  "version": "",
+                  "componentType": "",
+                  "metadata": [],
+                  "scopes": []
+               }
+            }
+         },
+         "dependsOn": []
+      }
+   ]
+}
