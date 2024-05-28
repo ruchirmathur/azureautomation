@@ -46,6 +46,16 @@
                 "type": "Microsoft.Web/staticSites",
                 "location": "[parameters('location')]",
                 "tags": "[parameters('resourceTags')]",
+                "properties": {
+                    "repositoryUrl": "[parameters('repositoryUrl')]",
+                    "branch": "[parameters('branch')]",
+                    "repositoryToken": "[parameters('repositoryToken')]",
+                    "buildProperties": {
+                        "appLocation": "[parameters('appLocation')]",
+                        "apiLocation": "[parameters('apiLocation')]",
+                        "appArtifactLocation": "[parameters('appArtifactLocation')]"
+                    }
+                },
                 "sku": {
                     "Tier": "[parameters('sku')]",
                     "Name": "[parameters('skuCode')]"
