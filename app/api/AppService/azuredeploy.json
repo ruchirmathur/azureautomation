@@ -8,32 +8,38 @@
             "minLength": 1,
             "metadata": {
             "description": "The name of the owner of the service"
-      }
+      }},
         },
         "serverfarms_asp_troubleshootingai_externalid": {
               "type": "string",
               "minLength": 1,
               "metadata": {
              "description": "The name of the owner of the service"
-        },
+        }},
      "sites_apiappservices_image_name": {
             "type": "string",
             "minLength": 1,
             "metadata": {
             "description": "The name of the owner of the service"
-        },
+        }},
      "customDomainVerificationId": {
              "type": "string",
             "minLength": 1,
             "metadata": {
             "description": "The name of the owner of the service"
-        },
+        }},
      "acrUserManagedIdentityID": {
-             "type": "string",
+            "type": "string",
             "minLength": 1,
             "metadata": {
             "description": "The name of the owner of the service"
-        }
+        }},
+    "userManagedIdentityID": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+            "description": "The name of the owner of the service"
+        }}
 
     },
     "variables": {},
@@ -47,7 +53,7 @@
             "identity": {
                 "type": "UserAssigned",
                 "userAssignedIdentities": {
-                    "/subscriptions/520c99ad-4a4a-4721-bdea-cc581f25f9f0/resourcegroups/ODL-Cognizant-Hackathon-1342007-02/providers/Microsoft.ManagedIdentity/userAssignedIdentities/managedID": {}
+                    "[parameters('userManagedIdentityID')]": {}
                 }
             },
             "properties": {
