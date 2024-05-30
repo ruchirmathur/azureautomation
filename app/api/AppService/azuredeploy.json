@@ -74,6 +74,7 @@
                         "hostType": "Repository"
                     }
                 ],
+                "serverFarmId": "[parameters('serverfarms_asp_troubleshootingai_externalid')]",
                 "reserved": true,
                 "isXenon": false,
                 "hyperV": false,
